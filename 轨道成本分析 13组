@@ -1,0 +1,52 @@
+# 周毅 242151220 王艺鸣 242151216 1正忠 242151218 刘天昊 242151201
+import pandas as pd
+import datetime
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+class CostAnalysisSystem:
+    def __init__(self):
+        self.cost_data = pd.DataFrame(columns=['Cost Type', 'Amount', 'Date'])
+
+    # 添加成本记录
+    def add_cost(self, cost_type, amount, date=None):
+        if not date:
+            date = datetime.datetime.now()
+        new_row = {'Cost Type': cost_type, 'Amount': amount, 'Date': date}
+        self.cost_data = self.cost_data.append(new_row, ignore_index=True)
+
+    # 查询历史成本记录
+    def query_history(self, start_date=None, end_date=None):
+        if start_date and end_date:
+            return self.cost_data[(self.cost_data['Date'] >= start_date) & (self.cost_data['Date'] <= end_date)]
+        else:
+            return self.cost_data
+
+    # 统计总成本、平均成本
+    def calculate_totals(self):
+        total_cost = self.cost_data['Amount'].sum()
+        avg_cost = self.cost_data['Amount'].mean()
+        return total_cost, avg_cost
+
+    # 趋势分析
+    def trend_analysis(self, cost_type):
+        filtered_data = self.cost_data[self.cost_data['Cost Type'] == cost_type]
+        plt.figure(figsize=(10,5))
+        sns.lineplot(x='Date', y='Amount', data=filtered_data)
+        plt.title(f"{cost_type} 成本趋势")
+        plt.xlabel('日期')
+        plt.ylabel('金额')
+        plt.show()
+
+# 示例使用
+system = CostAnalysisSystem()
+# 添加一些记录
+system.add_cost('人力成本', 5000, datetime.date(2023, 1, 1))
+system.add_cost('设备维护', 1000, datetime.date(2023, 1, 2))
+
+# 打印总成本和平均成本
+total, avg = system.calculate_totals()
+print("总成本:", total, "平均成本:", avg)
+
+# 进行趋势分析
+system.trend_analysis('人力成本')
